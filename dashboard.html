@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 50px;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Bienvenido al Dashboard</h1>
+    <p id="user-info">Cargando información...</p>
+    <button id="logout">Cerrar sesión</button>
+
+    <script>
+      // 1. Verificar si el usuario tiene un token almacenado
+      const token = localStorage.getItem("token");
+
+      // Log para verificar el token
+      console.log("Token almacenado:", token);
+
+      if (!token) {
+        // Si no hay token, redirigir al login
+        window.location.href = "index.html";
+      } else {
+        // 2. Usar el token para obtener la información del usuario
+        fetch("http://127.0.0.1:8000/users/me", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("No autorizado");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            document.getElementById(
+              "user-info"
+            ).textContent = `Bienvenido, ${data.username}`;
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            localStorage.removeItem("token"); // Borrar el token si hay un error
+            window.location.href = "index.html"; // Volver al login
+          });
+      }
+
+      // 3. Cerrar sesión
+      document.getElementById("logout").addEventListener("click", () => {
+        localStorage.removeItem("token"); // Eliminar el token
+        window.location.href = "index.html"; // Redirigir al login
+      });
+    </script>
+  </body>
+</html>
