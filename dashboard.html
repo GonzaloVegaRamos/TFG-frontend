@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
     <style>
-      /* Estilos Generales */
       body {
         font-family: "Arial", sans-serif;
         margin: 0;
@@ -15,8 +14,6 @@
         height: 100vh;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
       }
 
       .header {
@@ -26,6 +23,7 @@
         color: white;
         text-align: center;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        position: relative;
       }
 
       .header h1 {
@@ -37,7 +35,10 @@
         width: 100%;
         background-color: #222;
         padding: 10px 0;
-        text-align: center;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding-left: 20px;
       }
 
       nav a {
@@ -48,120 +49,117 @@
       }
 
       nav a:hover {
-        color: #ff4081;
+        color: #538b81;
       }
 
-      .container {
+      .account-details {
         background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        width: 100%;
-        max-width: 450px;
-        padding: 40px;
-        box-sizing: border-box;
-        margin-top: 50px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        z-index: 1;
       }
 
-      h2 {
+      .account-details h2 {
         color: #4caf50;
-        font-size: 2em;
-        margin-bottom: 20px;
+        font-size: 1.8em;
+        margin-bottom: 10px;
       }
 
-      p {
-        font-size: 1.2em;
+      .account-details p {
+        font-size: 1.1em;
         color: #555;
       }
 
-      #user-info {
-        font-weight: bold;
-        color: #333;
-      }
-
-      button {
+      .account-details button {
         background-color: #4caf50;
         color: white;
         border: none;
         border-radius: 5px;
-        padding: 12px 24px;
-        font-size: 1.1em;
+        padding: 10px 20px;
+        font-size: 1em;
         cursor: pointer;
         transition: background-color 0.3s ease;
-        margin-top: 30px;
-        width: 100%;
+        margin-top: 15px;
       }
 
-      button:hover {
+      .account-details button:hover {
         background-color: #45a049;
       }
 
+      .account-info {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        color: white;
+        font-size: 1.1em;
+      }
+
+      .main-image {
+        flex-grow: 1;
+        background: url("Fondo.png") no-repeat center center;
+        background-size: cover;
+      }
+
       footer {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
         padding: 10px;
         background-color: #333;
         color: white;
         text-align: center;
       }
 
-      .hidden {
-        display: none;
-      }
-
-      /* Estilos de Responsividad */
       @media (max-width: 768px) {
         .header h1 {
           font-size: 2em;
         }
+
         nav a {
-          margin: 0 15px;
+          margin: 0 10px;
           font-size: 1em;
         }
-        .container {
-          padding: 20px;
+
+        .account-details h2 {
+          font-size: 1.5em;
         }
       }
     </style>
   </head>
+
   <body>
-    <!-- Header con título -->
+    <!-- Header -->
     <div class="header">
-      <h1>Mi Dashboard</h1>
+      <div class="account-info">
+        <p id="user-info">Cargando información...</p>
+        <button id="login-btn" style="display: none">Iniciar sesión</button>
+        <button id="logout-btn" style="display: none">Cerrar sesión</button>
+      </div>
     </div>
 
-    <!-- Menú de navegación -->
+    <!-- Nav -->
     <nav>
-      <a href="#">Inicio</a>
-      <a href="#">Servicios</a>
-      <a href="#">Acerca de</a>
-      <a href="#">Contacto</a>
+      <a href="#">ARMARIO</a>
+      <a href="#">EXPLORAR</a>
+      <a href="#">AMIGOS</a>
     </nav>
 
-    <!-- Contenedor principal de la página -->
-    <div class="container">
-      <h2>Bienvenido al Dashboard</h2>
-      <p id="user-info">Cargando información...</p>
-      <button id="logout">Cerrar sesión</button>
-    </div>
+    <!-- Imagen principal -->
+    <div class="main-image"></div>
 
-    <!-- Pie de página -->
+    <!-- Footer -->
     <footer>
       <p>&copy; 2025 Mi Empresa | Todos los derechos reservados</p>
     </footer>
 
     <script>
-      // 1. Verificar si el usuario tiene un token almacenado
       const token = localStorage.getItem("token");
 
-      // Log para verificar el token
-      console.log("Token almacenado:", token);
-
       if (!token) {
-        // Si no hay token, redirigir al login
-        window.location.href = "Register.html";
+        // No hay token -> mostrar botón de iniciar sesión
+        document.getElementById("user-info").textContent =
+          "No has iniciado sesión";
+        document.getElementById("login-btn").style.display = "inline-block";
       } else {
-        // 2. Usar el token para obtener la información del usuario
+        // Hay token -> intentar obtener datos del usuario
         fetch("http://127.0.0.1:8000/users/me", {
           method: "GET",
           headers: {
@@ -178,18 +176,25 @@
             document.getElementById(
               "user-info"
             ).textContent = `Bienvenido, ${data.username}`;
+            document.getElementById("logout-btn").style.display =
+              "inline-block";
           })
           .catch((error) => {
             console.error("Error:", error);
-            localStorage.removeItem("token"); // Borrar el token si hay un error
-            window.location.href = "Register.html"; // Volver al login
+            localStorage.removeItem("token");
+            document.getElementById("user-info").textContent =
+              "No has iniciado sesión";
+            document.getElementById("login-btn").style.display = "inline-block";
           });
       }
 
-      // 3. Cerrar sesión
-      document.getElementById("logout").addEventListener("click", () => {
-        localStorage.removeItem("token"); // Eliminar el token
-        window.location.href = "Register.html"; // Redirigir al login
+      document.getElementById("login-btn").addEventListener("click", () => {
+        window.location.href = "Register.html"; // Aquí va tu página de login
+      });
+
+      document.getElementById("logout-btn").addEventListener("click", () => {
+        localStorage.removeItem("token");
+        location.reload(); // Refrescamos para que vuelva a mostrar el botón de login
       });
     </script>
   </body>

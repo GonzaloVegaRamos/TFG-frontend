@@ -22,7 +22,7 @@
         justify-content: center;
         align-items: center;
         padding: 20px;
-        transition: background-color 0.5s ease; /* Transición suave en el fondo de la sección */
+        transition: background-color 0.5s ease;
       }
 
       section .container {
@@ -127,12 +127,10 @@
         color: #677eff;
       }
 
-      /* Cambiar el fondo de la section cuando se activa el formulario de registro */
       section.active {
-        background-color: #00bfae; /* Fondo azul verdoso */
+        background-color: #00bfae;
       }
 
-      /* Hacer que solo se vea un formulario a la vez */
       section .container .signupBx,
       section .container .signinBx {
         position: absolute;
@@ -178,13 +176,10 @@
   <body>
     <section>
       <div class="container">
-        <!-- Formulario de inicio de sesión -->
+        <!-- Login -->
         <div class="user signinBx">
           <div class="imgBx">
-            <img
-              src="https://raw.githubusercontent.com/WoojinFive/CSS_Playground/master/Responsive%20Login%20and%20Registration%20Form/img1.jpg"
-              alt=""
-            />
+            <img src="ama.webp" alt="" />
           </div>
           <div class="formBx">
             <form id="login-form" onsubmit="return false;">
@@ -213,7 +208,7 @@
           </div>
         </div>
 
-        <!-- Formulario de registro -->
+        <!-- Registro -->
         <div class="user signupBx">
           <div class="formBx">
             <form id="register-form" onsubmit="return false;">
@@ -230,6 +225,14 @@
                 id="email-register"
                 name="email"
                 placeholder="Email"
+                required
+              />
+              <input
+                type="number"
+                id="age"
+                name="age"
+                placeholder="Edad"
+                min="1"
                 required
               />
               <input
@@ -255,10 +258,7 @@
             <div class="error" id="register-error-msg"></div>
           </div>
           <div class="imgBx">
-            <img
-              src="https://raw.githubusercontent.com/WoojinFive/CSS_Playground/master/Responsive%20Login%20and%20Registration%20Form/img2.jpg"
-              alt=""
-            />
+            <img src="verde.webp" alt="" />
           </div>
         </div>
       </div>
@@ -268,8 +268,8 @@
       const toggleForm = () => {
         const section = document.querySelector("section");
         const container = document.querySelector(".container");
-        section.classList.toggle("active"); // Cambiar fondo de section
-        container.classList.toggle("active"); // Cambiar entre formularios
+        section.classList.toggle("active");
+        container.classList.toggle("active");
       };
 
       // Login
@@ -295,7 +295,7 @@
 
             const data = await response.json();
             localStorage.setItem("token", data.access_token);
-            alert("Inicio de sesión exitoso");
+
             window.location.href = "dashboard.html";
           } catch (error) {
             errorMsg.textContent = error.message;
@@ -309,6 +309,7 @@
           event.preventDefault();
           const username = document.getElementById("username").value;
           const email = document.getElementById("email-register").value;
+          const age = parseInt(document.getElementById("age").value);
           const password = document.getElementById("password-register").value;
           const confirmPassword =
             document.getElementById("confirm-password").value;
@@ -321,7 +322,12 @@
             return;
           }
 
-          const userData = { username, email, password };
+          if (age < 18) {
+            errorMsg.textContent = "Debes tener al menos 18 años";
+            return;
+          }
+
+          const userData = { username, email, age, password };
 
           try {
             const response = await fetch(
@@ -338,7 +344,7 @@
             const data = await response.json();
             alert("Registro exitoso!");
             document.getElementById("register-form").reset();
-            toggleForm(); // Volver al login
+            toggleForm();
           } catch (error) {
             errorMsg.textContent = error.message;
           }
