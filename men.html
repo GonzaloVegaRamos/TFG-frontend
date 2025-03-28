@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Monigote Customizer</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        height: 100vh;
+        background: #f3f3f3;
+      }
+
+      .menu {
+        width: 200px;
+        background: #fff;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+      }
+
+      .menu h2 {
+        margin-bottom: 20px;
+        font-size: 18px;
+      }
+
+      .menu ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .menu li {
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      .menu li:hover {
+        background: #e0e0e0;
+      }
+
+      .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        margin-left: 220px;
+        padding-top: 20px;
+      }
+
+      /* Estilo de la card */
+      .ropa-item {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin: 10px;
+        padding: 20px;
+        width: 200px;
+        text-align: center;
+      }
+
+      .ropa-item img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border-radius: 10px;
+      }
+
+      .ropa-item p {
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .ropa-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start; /* Alinea las tarjetas a la izquierda */
+        gap: 10px; /* Agrega espacio entre las tarjetas */
+      }
+
+      /* Barra de búsqueda y dropdown alargados */
+      .search-container {
+        width: 80%;
+        background: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        margin-right: 300px;
+      }
+
+      .search-container input {
+        padding: 10px;
+        width: 70%;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      .search-container select {
+        padding: 10px;
+        width: 25%;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="menu">
+      <ul>
+        <li onclick="showOptions('Camisetas')">Camisetas</li>
+        <li onclick="showOptions('Sudaderas')">Sudaderas/Chaquetas</li>
+        <li onclick="showOptions('Pantalon')">Pantalones</li>
+        <li onclick="showOptions('Zapatillas')">Zapatillas</li>
+        <li onclick="showOptions('Accesorio')">Accesorios</li>
+        <li onclick="showOptions('Sombreros')">Sombreros/Gorros</li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <div class="search-container">
+        <input type="text" id="search-bar" placeholder="Buscar..." />
+        <select id="brand-dropdown">
+          <option value="">Seleccionar Marca</option>
+          <option value="Nike">Nike</option>
+          <option value="Adidas">Adidas</option>
+          <option value="Puma">Puma</option>
+          <option value="Gucci">Gucci</option>
+        </select>
+      </div>
+
+      <div id="options" class="option-box">
+        <h2 id="option-title">Opciones</h2>
+        <div id="ropa-list" class="ropa-list"></div>
+      </div>
+    </div>
+
+    <script>
+      // Función para obtener y mostrar ropa desde la API FastAPI
+      async function showOptions(category) {
+        console.log("Categoria recibida:", category); // Ver qué valor tiene category al empezar
+        document.getElementById("option-title").innerText = category;
+        document.getElementById("options").classList.add("active");
+
+        try {
+          // Asegurarse de que el valor de 'category' no tenga caracteres extraños y es seguro para la URL
+          const tipo = encodeURIComponent(category.trim()); // Asegura que no haya caracteres extraños
+          console.log("Tipo (url-encoded):", tipo); // Ver cómo se codifica el valor de tipo
+
+          const url = `http://127.0.0.1:8000/users/ropa?tipo=${tipo}`;
+          console.log("URL construida:", url); // Ver la URL final que se está generando
+
+          const response = await fetch(url);
+
+          if (!response.ok) {
+            throw new Error("Error al obtener los datos");
+          }
+
+          const ropaList = await response.json();
+          const ropaContainer = document.getElementById("ropa-list");
+          ropaContainer.innerHTML = "";
+
+          ropaList.forEach((ropa) => {
+            const item = document.createElement("div");
+            item.classList.add("ropa-item");
+
+            const img = document.createElement("img");
+            img.src = ropa.imagen_url || "https://via.placeholder.com/150"; // Usa la imagen real o un placeholder
+            img.alt = ropa.nombre;
+
+            const name = document.createElement("p");
+            name.textContent = ropa.nombre;
+
+            item.appendChild(img);
+            item.appendChild(name);
+
+            ropaContainer.appendChild(item);
+          });
+        } catch (error) {
+          console.error("Error en la solicitud:", error.message);
+        }
+      }
+    </script>
+  </body>
+</html>

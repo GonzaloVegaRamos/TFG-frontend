@@ -11,9 +11,10 @@
         padding: 0;
         color: #333;
         background: linear-gradient(135deg, #00bcd4, #8e24aa);
-        height: 100vh;
+        height: auto; /* Cambié de 100vh a auto para que el contenido se expanda */
         display: flex;
         flex-direction: column;
+        overflow-x: hidden;
       }
 
       .header {
@@ -96,31 +97,118 @@
       }
 
       .main-image {
-        flex-grow: 1;
-        background: url("Fondo.png") no-repeat center center;
-        background-size: cover;
+        display: flex; /* Usamos flexbox para centrar el contenido */
+        justify-content: center; /* Centrado horizontal */
+        align-items: center; /* Centrado vertical */
+        position: relative;
+        width: 100%;
+        height: 60vh; /* Ajustamos la altura a un 60% de la pantalla */
+        overflow: hidden;
       }
 
-      footer {
-        padding: 10px;
-        background-color: #333;
-        color: white;
+      .fondo {
+        position: absolute;
+        width: 100vw;
+        height: 100%;
+        display: flex;
+        animation: moverFondo 25s linear infinite;
+      }
+
+      .fondo img {
+        width: 100vw;
+        height: 100%;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+      @keyframes moverFondo {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-100vw);
+        }
+      }
+
+      .contenedor {
+        position: relative;
+        z-index: 1;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
         text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        width: 20%; /* Establece un ancho adecuado para que el contenedor no ocupe todo el espacio */
+        max-width: 500px; /* Establece un tamaño máximo */
       }
 
-      @media (max-width: 768px) {
-        .header h1 {
-          font-size: 2em;
-        }
+      .boton {
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 1rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
 
-        nav a {
-          margin: 0 10px;
-          font-size: 1em;
-        }
+      .boton1 {
+        background: #538b81;
+        color: white;
+      }
 
-        .account-details h2 {
-          font-size: 1.5em;
-        }
+      .boton2 {
+        background: #538b81;
+        color: white;
+      }
+
+      .boton:hover {
+        opacity: 0.8;
+      }
+
+      /* Estilos para la sección de noticias */
+      .news-section {
+        background-color: #fff;
+        padding: 30px;
+
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .news-section h2 {
+        text-align: center;
+        color: #4caf50;
+        font-size: 2em;
+        margin-bottom: 20px;
+      }
+
+      .news-item {
+        display: flex;
+        flex-direction: column;
+        background-color: #f9f9f9;
+        margin-bottom: 20px;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .news-item h3 {
+        color: #333;
+        font-size: 1.6em;
+        margin-bottom: 10px;
+      }
+
+      .news-item p {
+        font-size: 1.1em;
+        color: #555;
+      }
+
+      .news-item .date {
+        font-size: 0.9em;
+        color: #888;
+        margin-top: 10px;
+        text-align: right;
       }
     </style>
   </head>
@@ -142,8 +230,52 @@
       <a href="#">AMIGOS</a>
     </nav>
 
-    <!-- Imagen principal -->
-    <div class="main-image"></div>
+    <!-- Imagen principal con fondo en movimiento -->
+    <div class="main-image">
+      <div class="fondo">
+        <img src="img/FU.png" alt="Fondo" />
+        <img src="img/FU.png" alt="Fondo" />
+        <img src="img/FU.png" alt="Fondo" />
+      </div>
+
+      <div class="contenedor">
+        <h2>🌟 Armario Virtual 🌟</h2>
+        <button class="boton boton1">Empieza a Crear!</button>
+        <button class="boton boton2">Ver tu armario</button>
+      </div>
+    </div>
+
+    <!-- Sección de Noticias -->
+    <div class="news-section">
+      <h2>Últimas Noticias</h2>
+
+      <div class="news-item">
+        <h3>¡Nuevas funcionalidades en el armario virtual!</h3>
+        <p>
+          Este mes lanzamos nuevas opciones para personalizar tu armario
+          virtual. ¡Explora todas las novedades!
+        </p>
+        <p class="date">Publicado el 28 de Marzo, 2025</p>
+      </div>
+
+      <div class="news-item">
+        <h3>Explora nuevos armarios creados por otros usuarios</h3>
+        <p>
+          Ve cómo otros usuarios están personalizando su armario. ¡Inspírate y
+          crea el tuyo!
+        </p>
+        <p class="date">Publicado el 15 de Marzo, 2025</p>
+      </div>
+
+      <div class="news-item">
+        <h3>¡Nueva actualización disponible!</h3>
+        <p>
+          La nueva actualización trae mejoras en la velocidad y nuevas opciones
+          de diseño. ¡No te la pierdas!
+        </p>
+        <p class="date">Publicado el 10 de Marzo, 2025</p>
+      </div>
+    </div>
 
     <!-- Footer -->
     <footer>
@@ -154,12 +286,10 @@
       const token = localStorage.getItem("token");
 
       if (!token) {
-        // No hay token -> mostrar botón de iniciar sesión
         document.getElementById("user-info").textContent =
           "No has iniciado sesión";
         document.getElementById("login-btn").style.display = "inline-block";
       } else {
-        // Hay token -> intentar obtener datos del usuario
         fetch("http://127.0.0.1:8000/users/me", {
           method: "GET",
           headers: {
@@ -189,12 +319,12 @@
       }
 
       document.getElementById("login-btn").addEventListener("click", () => {
-        window.location.href = "Register.html"; // Aquí va tu página de login
+        window.location.href = "Register.html";
       });
 
       document.getElementById("logout-btn").addEventListener("click", () => {
         localStorage.removeItem("token");
-        location.reload(); // Refrescamos para que vuelva a mostrar el botón de login
+        location.reload();
       });
     </script>
   </body>
