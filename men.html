@@ -14,10 +14,15 @@
       }
 
       .menu {
+        position: fixed; /* Hace que el menú se mantenga fijo */
+        top: 0; /* Lo fija en la parte superior */
+        left: 0; /* Lo fija en la parte izquierda */
         width: 200px;
+        height: 100vh; /* Ocupa toda la altura de la pantalla */
         background: #fff;
         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         padding: 20px;
+        overflow-y: auto; /* Permite desplazarse dentro si el contenido es muy largo */
       }
 
       .menu h2 {
@@ -57,28 +62,43 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         margin: 10px;
         padding: 20px;
-        width: 200px;
+        width: 250px; /* Aumentado */
         text-align: center;
       }
 
       .ropa-item img {
         width: 100%;
-        height: 150px;
+        height: 200px; /* Más alto */
         object-fit: cover;
         margin-bottom: 15px;
         border-radius: 10px;
       }
 
       .ropa-item p {
-        font-size: 16px;
+        font-size: 18px; /* Un poco más grande */
         font-weight: bold;
+      }
+
+      .ropa-item a {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 15px; /* Botón más grande */
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 16px; /* Tamaño de texto aumentado */
+      }
+
+      .ropa-item a:hover {
+        background-color: #0056b3;
       }
 
       .ropa-list {
         display: flex;
         flex-wrap: wrap;
         justify-content: flex-start; /* Alinea las tarjetas a la izquierda */
-        gap: 10px; /* Agrega espacio entre las tarjetas */
+        gap: 15px; /* Más espacio entre tarjetas */
       }
 
       /* Barra de búsqueda y dropdown alargados */
@@ -107,17 +127,32 @@
         border-radius: 5px;
         border: 1px solid #ccc;
       }
+
+      /* Botón de favoritos */
+      /* Botón de favoritos */
+      .favorito-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 22px;
+        color: #888; /* Gris */
+        transition: color 0.3s ease;
+      }
+
+      .favorito-btn.fav {
+        color: red; /* Rojo cuando está activado */
+      }
     </style>
   </head>
   <body>
     <div class="menu">
       <ul>
-        <li onclick="showOptions('Camisetas')">Camisetas</li>
-        <li onclick="showOptions('Sudaderas')">Sudaderas/Chaquetas</li>
-        <li onclick="showOptions('Pantalon')">Pantalones</li>
-        <li onclick="showOptions('Zapatillas')">Zapatillas</li>
+        <li onclick="showOptions('Camiseta')">Camisetas</li>
+        <li onclick="showOptions('RAL')">Sudaderas/Chaquetas</li>
+        <li onclick="showOptions('PB')">Pantalones</li>
+        <li onclick="showOptions('Calzado')">Zapatillas</li>
         <li onclick="showOptions('Accesorio')">Accesorios</li>
-        <li onclick="showOptions('Sombreros')">Sombreros/Gorros</li>
+        <li onclick="showOptions('Chaqueta')">Chaquetas</li>
       </ul>
     </div>
 
@@ -134,25 +169,22 @@
       </div>
 
       <div id="options" class="option-box">
-        <h2 id="option-title">Opciones</h2>
         <div id="ropa-list" class="ropa-list"></div>
       </div>
     </div>
 
     <script>
-      // Función para obtener y mostrar ropa desde la API FastAPI
       async function showOptions(category) {
-        console.log("Categoria recibida:", category); // Ver qué valor tiene category al empezar
-        document.getElementById("option-title").innerText = category;
+        console.log("Categoria recibida:", category);
+
         document.getElementById("options").classList.add("active");
 
         try {
-          // Asegurarse de que el valor de 'category' no tenga caracteres extraños y es seguro para la URL
-          const tipo = encodeURIComponent(category.trim()); // Asegura que no haya caracteres extraños
-          console.log("Tipo (url-encoded):", tipo); // Ver cómo se codifica el valor de tipo
+          const tipo = encodeURIComponent(category.trim());
+          console.log("Tipo (url-encoded):", tipo);
 
           const url = `http://127.0.0.1:8000/users/ropa?tipo=${tipo}`;
-          console.log("URL construida:", url); // Ver la URL final que se está generando
+          console.log("URL construida:", url);
 
           const response = await fetch(url);
 
@@ -169,14 +201,38 @@
             item.classList.add("ropa-item");
 
             const img = document.createElement("img");
-            img.src = ropa.imagen_url || "https://via.placeholder.com/150"; // Usa la imagen real o un placeholder
+            img.src = ropa.img || "https://via.placeholder.com/150";
             img.alt = ropa.nombre;
 
             const name = document.createElement("p");
             name.textContent = ropa.nombre;
 
+            const brand = document.createElement("p");
+            brand.textContent = `Marca: ${ropa.marca || "Desconocida"}`;
+            brand.style.fontSize = "14px";
+            brand.style.color = "#666";
+
+            const favButton = document.createElement("button");
+            favButton.innerHTML = "🖤"; // Corazón gris por defecto
+            favButton.classList.add("favorito-btn");
+            favButton.onclick = () => {
+              favButton.classList.toggle("fav");
+              favButton.innerHTML = favButton.classList.contains("fav")
+                ? "❤️"
+                : "🖤";
+            };
+
+            const link = document.createElement("a");
+            link.href = ropa.url || "#";
+            link.textContent = "Ver más";
+            link.target = "_blank";
+            link.classList.add("ropa-link");
+
             item.appendChild(img);
             item.appendChild(name);
+            item.appendChild(brand);
+            item.appendChild(favButton);
+            item.appendChild(link);
 
             ropaContainer.appendChild(item);
           });
@@ -185,5 +241,7 @@
         }
       }
     </script>
+
+    <style></style>
   </body>
 </html>
