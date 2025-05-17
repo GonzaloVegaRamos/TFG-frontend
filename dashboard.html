@@ -87,13 +87,16 @@
       .account-details button:hover {
         background-color: #45a049;
       }
-
       .account-info {
         position: absolute;
         top: 10px;
         right: 20px;
         color: white;
         font-size: 1.1em;
+        display: flex; /* 👈 Alinea los elementos horizontalmente */
+        align-items: center;
+        gap: 10px; /* 👈 Espacio entre el texto y los botones */
+        z-index: 10; /* 👈 Por si acaso, para asegurar visibilidad */
       }
 
       .main-image {
@@ -240,7 +243,9 @@
 
       <div class="contenedor">
         <h2>🌟 Armario Virtual 🌟</h2>
-        <button class="boton boton1">Empieza a Crear!</button>
+        <button class="boton boton1" onclick="window.location.href='men.html'">
+          Empieza a Crear!
+        </button>
         <button class="boton boton2">Ver tu armario</button>
       </div>
     </div>
@@ -305,7 +310,7 @@
           .then((data) => {
             document.getElementById(
               "user-info"
-            ).textContent = `Bienvenido, ${data.username}`;
+            ).textContent = `${data.username}`;
             document.getElementById("logout-btn").style.display =
               "inline-block";
           })

@@ -191,7 +191,7 @@
 
       /* Estilos para el popup/modal */
       .modal {
-        display: none;
+        display: none; /* Inicialmente oculto */
         position: fixed;
         z-index: 1;
         left: 0;
@@ -254,61 +254,6 @@
         text-decoration: none;
         cursor: pointer;
       }
-
-      /* Estilos para el modal de confirmación */
-      #confirmationModal .modal-content {
-        max-width: 400px;
-      }
-
-      #confirmationMessage {
-        font-size: 16px;
-        margin-bottom: 20px;
-      }
-
-      /* Estilos para los nuevos botones */
-      .action-button {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: all 0.3s;
-        margin: 0 10px;
-      }
-
-      #shareButton {
-        background-color: #4caf50;
-        color: white;
-      }
-
-      #viewWardrobeButton {
-        background-color: #2196f3;
-        color: white;
-      }
-
-      #shareButton:hover {
-        background-color: #45a049;
-      }
-
-      #viewWardrobeButton:hover {
-        background-color: #0b7dda;
-      }
-
-      /* Estilos para el input de nombre */
-      #nombreConjunto {
-        padding: 12px;
-        width: 80%;
-        border: 2px solid #ddd;
-        border-radius: 8px;
-        font-size: 16px;
-        margin: 15px 0;
-        transition: border 0.3s;
-      }
-
-      #nombreConjunto:focus {
-        border-color: #007bff;
-        outline: none;
-      }
     </style>
   </head>
   <body>
@@ -324,6 +269,7 @@
       <div class="seleccion-container">
         <h2>Selección</h2>
         <div id="seleccion-final"></div>
+        <!-- Botón para abrir el popup -->
         <button class="save-button" onclick="mostrarPopup()">
           Guardar Conjunto
         </button>
@@ -355,13 +301,6 @@
           <span class="close" onclick="cerrarPopup()">&times;</span>
         </div>
         <div class="modal-body" id="modal-seleccion-final"></div>
-        <div style="margin: 20px 0; text-align: center">
-          <input
-            type="text"
-            id="nombreConjunto"
-            placeholder="Nombre para tu conjunto"
-          />
-        </div>
         <div style="text-align: center">
           <button class="save-button" onclick="guardarConjunto()">
             Confirmar y Guardar
@@ -370,48 +309,15 @@
       </div>
     </div>
 
-    <!-- Modal de Confirmación -->
-    <div id="confirmationModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>¡Conjunto guardado!</h3>
-          <span class="close" onclick="cerrarConfirmationModal()">&times;</span>
-        </div>
-        <div class="modal-body" style="text-align: center; padding: 20px">
-          <p id="confirmationMessage"></p>
-          <div style="margin-top: 20px">
-            <button
-              id="shareButton"
-              class="action-button"
-              onclick="compartirConjunto()"
-            >
-              Compartir
-            </button>
-            <button
-              id="viewWardrobeButton"
-              class="action-button"
-              onclick="verArmario()"
-            >
-              Ver Armario
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <script>
-      let seleccion = {};
-      let conjuntoGuardadoId = null;
+      let seleccion = {}; // Objeto para guardar la selección
 
-      function seleccionarPrenda(categoria, prenda) {
-        seleccion[categoria] = prenda;
-        actualizarSeleccion();
-      }
-
+      // Función para actualizar la vista de selección
       function actualizarSeleccion() {
         const seleccionContainer = document.getElementById("seleccion-final");
-        seleccionContainer.innerHTML = "";
+        seleccionContainer.innerHTML = ""; // Limpiar la selección
 
+        // Crear contenedores para cada tipo de prenda
         const categorias = [
           "Camiseta",
           "RAL",
@@ -420,7 +326,6 @@
           "Accesorio",
           "Chaqueta",
         ];
-
         categorias.forEach((categoria) => {
           const categoriaContainer = document.createElement("div");
           categoriaContainer.classList.add("categoria-seleccion");
@@ -428,6 +333,7 @@
           const lista = document.createElement("div");
           lista.classList.add("seleccion-list");
 
+          // Si hay prendas en esa categoría, las mostramos
           if (seleccion[categoria]) {
             const prenda = seleccion[categoria];
             const item = document.createElement("div");
@@ -447,18 +353,19 @@
         });
       }
 
+      // Función para eliminar una prenda
       function eliminarPrenda(categoria) {
         delete seleccion[categoria];
         actualizarSeleccion();
       }
 
+      // Función para mostrar el modal de confirmación
       function mostrarPopup() {
         const modal = document.getElementById("myModal");
-        document.getElementById("nombreConjunto").value = "";
         modal.style.display = "block";
 
         const modalContainer = document.getElementById("modal-seleccion-final");
-        modalContainer.innerHTML = "";
+        modalContainer.innerHTML = ""; // Limpiar contenido previo
 
         Object.values(seleccion).forEach((prenda) => {
           const item = document.createElement("div");
@@ -472,158 +379,89 @@
         });
       }
 
+      // Función para cerrar el modal
       function cerrarPopup() {
-        document.getElementById("myModal").style.display = "none";
+        const modal = document.getElementById("myModal");
+        modal.style.display = "none";
       }
 
-      function mostrarConfirmationModal(conjuntoId, nombreConjunto) {
-        const modal = document.getElementById("confirmationModal");
-        const message = document.getElementById("confirmationMessage");
-
-        message.textContent = `"${nombreConjunto}" se ha guardado correctamente.`;
-        modal.style.display = "block";
-        conjuntoGuardadoId = conjuntoId;
-      }
-
-      function cerrarConfirmationModal() {
-        document.getElementById("confirmationModal").style.display = "none";
-      }
-
-      function compartirConjunto() {
-        if (conjuntoGuardadoId) {
-          const shareUrl = `http://tuapp.com/conjunto/${conjuntoGuardadoId}`;
-
-          // Intenta usar la API de compartir nativa
-          if (navigator.share) {
-            navigator
-              .share({
-                title: "Mi conjunto de ropa",
-                text: `Mira este conjunto que creé: ${
-                  document.getElementById("nombreConjunto").value
-                }`,
-                url: shareUrl,
-              })
-              .catch((err) => {
-                console.log("Error al compartir:", err);
-                copiarAlPortapapeles(shareUrl);
-              });
-          } else {
-            copiarAlPortapapeles(shareUrl);
-          }
-        }
-        cerrarConfirmationModal();
-      }
-
-      function copiarAlPortapapeles(texto) {
-        navigator.clipboard
-          .writeText(texto)
-          .then(() => {
-            alert("¡Enlace copiado al portapapeles!\n" + texto);
-          })
-          .catch((err) => {
-            console.error("Error al copiar:", err);
-            alert(
-              "No se pudo copiar el enlace automáticamente. Cópialo manualmente:\n" +
-                texto
-            );
-          });
-      }
-
-      function verArmario() {
-        alert("Redirigiendo a tu armario... (Función en desarrollo)");
-        cerrarConfirmationModal();
-        // window.location.href = "/armario"; // Descomenta cuando tengas esta ruta
-      }
-
-      async function showOptions(category) {
-        const url = `http://127.0.0.1:8000/users/ropa?tipo=${encodeURIComponent(
-          category.trim()
-        )}`;
-        const response = await fetch(url);
-        if (!response.ok) return;
-        const ropaList = await response.json();
-        const ropaContainer = document.getElementById("ropa-list");
-        ropaContainer.innerHTML = "";
-
-        ropaList.forEach((ropa) => {
-          const item = document.createElement("div");
-          item.classList.add("ropa-item");
-
-          item.innerHTML = `
-            <img src="${ropa.img}" alt="${ropa.nombre}" />
-            <p>${ropa.nombre}</p>
-            <p>Marca: ${ropa.marca || "Desconocida"}</p>
-            <button onclick='seleccionarPrenda("${category}", ${JSON.stringify(
-            ropa
-          )})'>Seleccionar</button>
-          `;
-          ropaContainer.appendChild(item);
-        });
-      }
-
-      function esUUID(id) {
-        const uuidRegex =
-          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        return typeof id === "string" && uuidRegex.test(id);
-      }
-
-      function guardarConjunto() {
+      // Función para guardar el conjunto
+      async function guardarConjunto() {
         const token = localStorage.getItem("token");
+
         if (!token) {
           alert("Debes iniciar sesión para guardar conjuntos.");
-          window.location.href = "Register.html";
+          window.location.href = "Register.html"; // Redirige al login
           return;
         }
 
-        const nombreInput = document.getElementById("nombreConjunto");
-        const nombreConjunto = nombreInput.value.trim();
+        // Obtener datos del usuario con el token
+        let usuarioAutenticado = null;
+        try {
+          const userRes = await fetch("http://127.0.0.1:8000/users/me", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
-        if (!nombreConjunto) {
-          alert("Por favor ingresa un nombre para tu conjunto.");
+          if (!userRes.ok) {
+            throw new Error("Token inválido o expirado");
+          }
+
+          usuarioAutenticado = await userRes.json();
+        } catch (error) {
+          console.error("Error autenticando:", error);
+          alert("Tu sesión ha expirado. Inicia sesión nuevamente.");
+          localStorage.removeItem("token");
+          window.location.href = "Register.html"; // Redirige al login si el token es inválido
           return;
         }
 
+        // Obtener el nombre del conjunto desde el input
+        const conjuntoNombre = document
+          .getElementById("conjunto-nombre")
+          .value.trim();
+
+        if (!conjuntoNombre) {
+          alert("Por favor, escribe un nombre para el conjunto.");
+          return;
+        }
+
+        // Preparar los datos para enviar
         const conjuntoData = {
-          nombre: nombreConjunto,
+          nombre: conjuntoNombre,
+          usuario: usuarioAutenticado.id, // Usuario autenticado
           camiseta: seleccion["Camiseta"]?.id || null,
           ral: seleccion["RAL"]?.id || null,
-          pb: seleccion["PB"]?.id || null,
+          pb: seleccion["PB"]?.id || null, // Aquí se mantiene el nombre "pb" para los pantalones
           calzado: seleccion["Calzado"]?.id || null,
           accesorio: seleccion["Accesorio"]?.id || null,
           chaqueta: seleccion["Chaqueta"]?.id || null,
         };
 
-        // Filtramos los valores null
-        const datosFiltrados = Object.fromEntries(
-          Object.entries(conjuntoData).filter(([_, value]) => value !== null)
-        );
-
-        fetch("http://127.0.0.1:8000/users/conjuntos", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(datosFiltrados),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              return response.text().then((text) => {
-                throw new Error(
-                  `Error en la solicitud: ${response.statusText}, Detalles: ${text}`
-                );
-              });
-            }
-            return response.json();
-          })
-          .then((data) => {
-            mostrarConfirmationModal(data.id, nombreConjunto);
-            cerrarPopup();
-          })
-          .catch((error) => {
-            console.error("Error al guardar el conjunto:", error);
-            alert("Hubo un error al guardar el conjunto: " + error.message);
+        try {
+          const response = await fetch("http://127.0.0.1:8000/conjuntos", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(conjuntoData),
           });
+
+          if (response.ok) {
+            alert("Conjunto guardado con éxito.");
+            cerrarPopup();
+          } else {
+            const errorData = await response.json();
+            console.error("Error del servidor:", errorData);
+            alert("Hubo un error al guardar el conjunto.");
+          }
+        } catch (error) {
+          console.error("Error al guardar:", error);
+          alert("Error de red al guardar el conjunto.");
+        }
       }
     </script>
   </body>
