@@ -489,31 +489,6 @@
         document.getElementById("confirmationModal").style.display = "none";
       }
 
-      function compartirConjunto() {
-        if (conjuntoGuardadoId) {
-          const shareUrl = `http://tuapp.com/conjunto/${conjuntoGuardadoId}`;
-
-          // Intenta usar la API de compartir nativa
-          if (navigator.share) {
-            navigator
-              .share({
-                title: "Mi conjunto de ropa",
-                text: `Mira este conjunto que creé: ${
-                  document.getElementById("nombreConjunto").value
-                }`,
-                url: shareUrl,
-              })
-              .catch((err) => {
-                console.log("Error al compartir:", err);
-                copiarAlPortapapeles(shareUrl);
-              });
-          } else {
-            copiarAlPortapapeles(shareUrl);
-          }
-        }
-        cerrarConfirmationModal();
-      }
-
       function copiarAlPortapapeles(texto) {
         navigator.clipboard
           .writeText(texto)
@@ -624,6 +599,60 @@
             console.error("Error al guardar el conjunto:", error);
             alert("Hubo un error al guardar el conjunto: " + error.message);
           });
+      }
+
+      // AÑADE ESTO FUERA de guardarConjunto:
+      function compartirConjunto() {
+        if (!conjuntoGuardadoId) {
+          console.error(
+            "Error: conjuntoGuardadoId no definido",
+            conjuntoGuardadoId
+          );
+          alert("No se puede compartir: ID del conjunto no encontrado");
+          cerrarConfirmationModal();
+          return;
+        }
+
+        const baseUrl = window.location.origin || "http://localhost";
+        const shareUrl = `${baseUrl}/view-conjunto.html?id=${conjuntoGuardadoId}`;
+        console.log("URL para compartir:", shareUrl);
+
+        const nombreInput = document.getElementById("nombreConjunto");
+        const nombreConjunto = nombreInput
+          ? nombreInput.value
+          : "Mi conjunto de ropa";
+
+        if (navigator.share) {
+          navigator
+            .share({
+              title: `${nombreConjunto} - Monigote Customizer`,
+              text: `Mira este conjunto de ropa que creé: ${nombreConjunto}`,
+              url: shareUrl,
+            })
+            .catch((err) => {
+              console.error("Error al compartir:", err);
+              copiarUrlFallback(shareUrl);
+            });
+        } else {
+          copiarUrlFallback(shareUrl);
+        }
+      }
+
+      function copiarUrlFallback(url) {
+        const input = document.createElement("input");
+        input.value = url;
+        document.body.appendChild(input);
+        input.select();
+
+        try {
+          document.execCommand("copy");
+          alert("✅ Enlace copiado:\n" + url);
+        } catch (err) {
+          console.error("Error al copiar:", err);
+          prompt("Por favor copia este enlace manualmente:", url);
+        }
+
+        document.body.removeChild(input);
       }
     </script>
   </body>
