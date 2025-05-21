@@ -89,7 +89,7 @@
     </style>
   </head>
   <body>
-    <h1>Conjunto de ropa</h1>
+    <h1 id="nombre">Conjunto de ropa</h1>
     <div id="conjunto-info">Cargando conjunto...</div>
 
     <script>
@@ -106,6 +106,9 @@
             return response.json();
           })
           .then(async (conjunto) => {
+            document.getElementById("nombre").innerText =
+              conjunto.nombre || "Conjunto de ropa";
+
             const div = document.getElementById("conjunto-info");
             div.innerHTML = "";
 
