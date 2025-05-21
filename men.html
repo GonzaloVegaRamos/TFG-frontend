@@ -313,6 +313,12 @@
   </head>
   <body>
     <div class="menu">
+      <div class="logo">
+        <a href="dashboard.html">
+          <img src="img/STYLO (1).png" alt="Logo" style="height: 80px" />
+        </a>
+      </div>
+
       <ul>
         <li onclick="showOptions('Camiseta')">Camisetas</li>
         <li onclick="showOptions('RAL')">Sudaderas/Chaquetas</li>
@@ -604,38 +610,15 @@
       // AÑADE ESTO FUERA de guardarConjunto:
       function compartirConjunto() {
         if (!conjuntoGuardadoId) {
-          console.error(
-            "Error: conjuntoGuardadoId no definido",
-            conjuntoGuardadoId
-          );
+          console.error("Error: conjuntoGuardadoId no definido");
           alert("No se puede compartir: ID del conjunto no encontrado");
           cerrarConfirmationModal();
           return;
         }
 
-        const baseUrl = window.location.origin || "http://localhost";
-        const shareUrl = `${baseUrl}/view-conjunto.html?id=${conjuntoGuardadoId}`;
-        console.log("URL para compartir:", shareUrl);
-
-        const nombreInput = document.getElementById("nombreConjunto");
-        const nombreConjunto = nombreInput
-          ? nombreInput.value
-          : "Mi conjunto de ropa";
-
-        if (navigator.share) {
-          navigator
-            .share({
-              title: `${nombreConjunto} - Monigote Customizer`,
-              text: `Mira este conjunto de ropa que creé: ${nombreConjunto}`,
-              url: shareUrl,
-            })
-            .catch((err) => {
-              console.error("Error al compartir:", err);
-              copiarUrlFallback(shareUrl);
-            });
-        } else {
-          copiarUrlFallback(shareUrl);
-        }
+        const urlCompartir = `file:///C:/hlocal2/TFG/frontend/view-conjunto.html?id=${conjuntoGuardadoId}`;
+        copiarAlPortapapeles(urlCompartir);
+        cerrarConfirmationModal();
       }
 
       function copiarUrlFallback(url) {
