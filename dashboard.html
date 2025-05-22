@@ -225,6 +225,71 @@
         font-style: italic;
         user-select: none;
       }
+
+      /* Banner de anuncio - MODIFICADO */
+      .ad-section {
+        width: 100%;
+        background: #ffe5d4;
+        padding: 30px 0;
+        margin: 40px 0;
+      }
+
+      .ad-banner {
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+        background: #ffe5d4;
+        padding: 20px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .ad-banner img {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        border-radius: 10px;
+        object-fit: cover;
+      }
+
+      .ad-text {
+        flex: 1;
+        padding: 0 20px;
+      }
+
+      .ad-text h2 {
+        font-size: 1.8rem;
+        color: #2f3542;
+        margin-bottom: 10px;
+      }
+
+      .ad-text p {
+        font-size: 1.1rem;
+        color: #555;
+        margin-bottom: 15px;
+      }
+
+      .ad-text button {
+        background: #60b1a7;
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 30px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+      }
+
+      .ad-text button:hover {
+        background-color: #2f3542;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
       /* Footer */
       footer {
         background: #fff;
@@ -250,6 +315,34 @@
           gap: 20px;
           padding: 10px 15px;
         }
+
+        /* Responsive para el banner */
+        .ad-section {
+          padding: 20px 0;
+          margin: 30px 0;
+        }
+
+        .ad-banner {
+          flex-direction: column;
+          padding: 15px;
+          margin: 0 auto;
+          width: 95%;
+        }
+
+        .ad-banner img {
+          max-width: 100%;
+          width: 100%;
+          margin-bottom: 15px;
+        }
+
+        .ad-text {
+          padding: 0;
+          text-align: center;
+        }
+
+        .ad-text h2 {
+          font-size: 1.5rem;
+        }
       }
     </style>
   </head>
@@ -271,7 +364,7 @@
     <nav>
       <a href="armario.html">ARMARIO</a>
       <a href="#">EXPLORAR</a>
-      <a href="#">AMIGOS</a>
+      <a href="#">¿POR DONDE EMPIEZO?</a>
     </nav>
 
     <!-- Imagen principal con fondo en movimiento -->
@@ -296,37 +389,22 @@
       </div>
     </div>
 
-    <!-- Sección de Noticias -->
-    <div class="news-section">
-      <h2>Últimas Noticias</h2>
-
-      <div class="news-item">
-        <h3>¡Nuevas funcionalidades en el armario virtual!</h3>
-        <p>
-          Este mes lanzamos nuevas opciones para personalizar tu armario
-          virtual. ¡Explora todas las novedades!
-        </p>
-        <p class="date">Publicado el 28 de Marzo, 2025</p>
+    <!-- Banner de Anuncio - MODIFICADO -->
+    <section class="ad-section">
+      <div class="ad-banner">
+        <img
+          src="img\Nueva coleccion verano 2025 (1).png"
+          alt="Anuncio especial"
+        />
+        <div class="ad-text">
+          <h2>🎉 ¡Gran promoción de temporada!</h2>
+          <p>Descubre descuentos exclusivos en nuevas colecciones.</p>
+          <button onclick="window.location.href='promo.html'">
+            Ver Promoción
+          </button>
+        </div>
       </div>
-
-      <div class="news-item">
-        <h3>Explora nuevos armarios creados por otros usuarios</h3>
-        <p>
-          Ve cómo otros usuarios están personalizando su armario. ¡Inspírate y
-          crea el tuyo!
-        </p>
-        <p class="date">Publicado el 15 de Marzo, 2025</p>
-      </div>
-
-      <div class="news-item">
-        <h3>¡Nueva actualización disponible!</h3>
-        <p>
-          La nueva actualización trae mejoras en la velocidad y nuevas opciones
-          de diseño. ¡No te la pierdas!
-        </p>
-        <p class="date">Publicado el 10 de Marzo, 2025</p>
-      </div>
-    </div>
+    </section>
 
     <!-- Footer -->
     <footer>

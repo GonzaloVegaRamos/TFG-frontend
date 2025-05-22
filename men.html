@@ -217,7 +217,7 @@
       .modal {
         display: none;
         position: fixed;
-        z-index: 1;
+        z-index: 15;
         left: 0;
         top: 0;
         width: 100%;
@@ -333,6 +333,40 @@
         border-color: #007bff;
         outline: none;
       }
+
+      /* Contenedor de imagen con logo */
+      .ropa-imagen-container {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        margin-bottom: 15px;
+      }
+
+      /* Imagen principal de la prenda */
+      .ropa-imagen-container img:first-child {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+      }
+
+      /* Logo de marca superpuesto */
+      .ropa-imagen-container .marca-logo {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 75px !important; /* Forzamos el tamaño */
+        height: 75px !important; /* Forzamos el tamaño */
+        border-radius: 50%;
+        background: white;
+        padding: 3px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        object-fit: contain;
+        z-index: 2;
+      }
+      .item {
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
@@ -345,7 +379,7 @@
 
       <ul>
         <li onclick="showOptions('Camiseta')">Camisetas</li>
-        <li onclick="showOptions('RAL')">Sudaderas/Chaquetas</li>
+        <li onclick="showOptions('RAL')">Sudaderas</li>
         <li onclick="showOptions('PB')">Pantalones</li>
         <li onclick="showOptions('Calzado')">Zapatillas</li>
         <li onclick="showOptions('Accesorio')">Accesorios</li>
@@ -444,6 +478,11 @@
       let seleccion = {};
       let conjuntoGuardadoId = null;
       let currentCategory = "";
+      const imagenesPorMarca = {
+        HOLLISTER: "img/hollister.png",
+        PB: "img/pb.png",
+        uniqlo: "img/uniqlo.png",
+      };
 
       // Función para manejar la selección de prendas
       function seleccionarPrenda(categoria, prenda) {
@@ -478,11 +517,11 @@
             item.classList.add("ropa-item");
 
             item.innerHTML = `
-              <img src="${prenda.img}" alt="${prenda.nombre}" />
-              <p>${prenda.nombre}</p>
-              <p>Marca: ${prenda.marca}</p>
-              <button class="remove-btn" onclick="eliminarPrenda('${categoria}')">X</button>
-            `;
+                  <img src="${prenda.img}" alt="${prenda.nombre}" />
+                  <p>${prenda.nombre}</p>
+                  <p>Marca: ${prenda.marca}</p>
+                  <button class="remove-btn" onclick="eliminarPrenda('${categoria}')">X</button>
+                `;
             lista.appendChild(item);
           }
 
@@ -511,9 +550,9 @@
           item.classList.add("modal-item");
 
           item.innerHTML = `
-            <img src="${prenda.img}" alt="${prenda.nombre}" />
-            <p>${prenda.nombre}</p>
-          `;
+                <img src="${prenda.img}" alt="${prenda.nombre}" />
+                <p>${prenda.nombre}</p>
+              `;
           modalContainer.appendChild(item);
         });
       }
@@ -615,15 +654,29 @@
             const item = document.createElement("div");
             item.classList.add("ropa-item");
 
+            // Verificar si hay logo para esta marca
+            const logoMarca = imagenesPorMarca[ropa.marca] || null;
+
             item.innerHTML = `
-              <img src="${ropa.img}" alt="${ropa.nombre}" />
-              <p>${ropa.nombre}</p>
-              <p>Marca: ${ropa.marca || "Desconocida"}</p>
-              <p>Género: ${ropa.Genero || "No especificado"}</p>
-              <button onclick='seleccionarPrenda("${category}", ${JSON.stringify(
-              ropa
-            )})'>Seleccionar</button>
-            `;
+  <div class="ropa-imagen-container">
+    <img src="${ropa.img}" alt="${ropa.nombre}" />
+    ${
+      logoMarca
+        ? `<img src="${logoMarca}" class="marca-logo" alt="${ropa.marca} logo" />`
+        : ""
+    }
+  </div>
+  <p>${ropa.nombre}</p>
+  <a href="${ropa.url}" target="_blank" class="ver-prenda-btn">Ver en tienda</a>
+`;
+
+            // Ahora asignamos el onclick al contenedor 'item':
+            item
+              .querySelector(".ropa-imagen-container")
+              .addEventListener("click", (e) => {
+                e.stopPropagation(); // Evita que el click llegue al enlace si está dentro
+                seleccionarPrenda(category, ropa);
+              });
             ropaContainer.appendChild(item);
           });
         } catch (error) {
